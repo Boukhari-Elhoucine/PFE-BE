@@ -23,44 +23,25 @@ from skimage.segmentation import (morphological_geodesic_active_contour,
                                   watershed,
                                   mark_boundaries)
 
-import matplotlib.pyplot as plt
 from skimage import data, img_as_float
 from skimage.segmentation import chan_vese
 
 
-def chanves():
-    image = cv2.imread('Dataset_BUSI_with_GT/malignant/malignant (1).png', 0)
-    plt.imshow(image, cmap='gray')
+def chanves(image):
+
 
     # image = img_as_float(data.camera())
     # Feel free to play around with the parameters to see how they impact the result
     cv = chan_vese(image, mu=0.25, lambda1=1, lambda2=1, tol=1e-3, max_iter=200,
                    dt=0.5, init_level_set="checkerboard", extended_output=True)
 
-    fig, axes = plt.subplots(2, 2, figsize=(8, 8))
-    ax = axes.flatten()
 
-    ax[0].imshow(image, cmap="gray")
-    ax[0].set_axis_off()
-    ax[0].set_title("Original Image", fontsize=12)
 
-    ax[1].imshow(cv[0], cmap="gray")
-    ax[1].set_axis_off()
-    title = "Chan-Vese segmentation - {} iterations".format(len(cv[2]))
-    ax[1].set_title(title, fontsize=12)
 
-    ax[2].imshow(cv[1], cmap="gray")
-    ax[2].set_axis_off()
-    ax[2].set_title("Final Level Set", fontsize=12)
 
-    ax[3].plot(cv[2])
-    ax[3].set_title("Evolution of energy over iterations", fontsize=12)
-
-    fig.tight_layout()
-    plt.show()
 
     img_cv = cv[1]
-    plt.imshow(img_cv, cmap='gray')
+
 
     edges = sobel(img_cv)
     im_test1 = watershed(edges, markers=468, compactness=0.001)
@@ -107,47 +88,5 @@ def chanves():
         print(f"Adapted Rand recall: {recall}")
         print(f"False Splits: {splits}")
         print(f"False Merges: {merges}")
-
-    fig, axes = plt.subplots(2, 3, figsize=(9, 6), constrained_layout=True)
-    ax = axes.ravel()
-
-    ax[0].scatter(merge_list, split_list)
-    for i, txt in enumerate(short_method_names):
-        ax[0].annotate(txt, (merge_list[i], split_list[i]),
-                       verticalalignment='center')
-    ax[0].set_xlabel('False Merges (bits)')
-    ax[0].set_ylabel('False Splits (bits)')
-    ax[0].set_title('Split Variation of Information')
-
-    ax[1].scatter(precision_list, recall_list)
-    for i, txt in enumerate(short_method_names):
-        ax[1].annotate(txt, (precision_list[i], recall_list[i]),
-                       verticalalignment='center')
-    ax[1].set_xlabel('Precision')
-    ax[1].set_ylabel('Recall')
-    ax[1].set_title('Adapted Rand precision vs. recall')
-    ax[1].set_xlim(0, 1)
-    ax[1].set_ylim(0, 1)
-
-    ax[2].imshow(mark_boundaries(image, im_true))
-    ax[2].set_title('True Segmentation')
-    ax[2].set_axis_off()
-
-    ax[3].imshow(mark_boundaries(image, im_test1))
-    ax[3].set_title('Compact Watershed')
-    ax[3].set_axis_off()
-
-    ax[4].imshow(mark_boundaries(image, im_test2))
-    ax[4].set_title('Edge Detection')
-    ax[4].set_axis_off()
-
-    ax[5].imshow(mark_boundaries(image, im_test3))
-    ax[5].set_title('Morphological GAC')
-    ax[5].set_axis_off()
-
-    plt.show()
-
-    plt.imshow(mark_boundaries(image, im_true))
-
-    plt.imshow(mark_boundaries(image, im_test3))
+    return (mark_boundaries(image,im_true))
 

@@ -1,9 +1,11 @@
-from segmentation import chanves
+
 from flask import Flask,request,send_file
 from PIL import Image
-from segmentation import chanves
+from segmentation import segment
 import io
+import cv2
 import numpy as np
+
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
@@ -15,13 +17,12 @@ def process():
     if "file" not in request.files:
         return  "file not found"
     file = request.files["file"]
-    im_array = np.array(Image.open(file))
-    result = chanves(im_array[:,:,0])
-    image = Image.fromarray(result.astype("uint8"))
-    file_object = io.BytesIO()
-    image.save(file_object,"PNG")
-    file_object.seek(0)
-    return send_file(file_object,mimetype="image/PNG")
+    img = Image.open(file)
+    im_array = np.array(img)
+    image = cv2.cvtColor(np.array(im_array),cv2.COLOR_BGR2GRAY)
+    result = segment(image)
+    cv2.imwrite("result.png",255*result)
+    return "worked"
 
 if __name__ == "__main__":
 

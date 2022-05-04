@@ -1,6 +1,5 @@
 
 
-
 from numpy import *
 import cv2
 import numpy
@@ -23,25 +22,18 @@ from skimage.segmentation import (morphological_geodesic_active_contour,
                                   watershed,
                                   mark_boundaries)
 
+import matplotlib.pyplot as plt
 from skimage import data, img_as_float
 from skimage.segmentation import chan_vese
 
 
-def chanves(image):
 
-
+def segment(image):
     # image = img_as_float(data.camera())
     # Feel free to play around with the parameters to see how they impact the result
     cv = chan_vese(image, mu=0.25, lambda1=1, lambda2=1, tol=1e-3, max_iter=200,
                    dt=0.5, init_level_set="checkerboard", extended_output=True)
-
-
-
-
-
-
     img_cv = cv[1]
-
 
     edges = sobel(img_cv)
     im_test1 = watershed(edges, markers=468, compactness=0.001)
@@ -88,5 +80,6 @@ def chanves(image):
         print(f"Adapted Rand recall: {recall}")
         print(f"False Splits: {splits}")
         print(f"False Merges: {merges}")
-    return (mark_boundaries(image,im_true))
+
+    return mark_boundaries(image,im_true)
 

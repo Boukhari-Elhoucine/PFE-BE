@@ -3,6 +3,7 @@ from flask import Flask,request,send_file
 from PIL import Image
 from segmentation import segment
 import io
+import base64
 import cv2
 import numpy as np
 
@@ -21,8 +22,12 @@ def process():
     im_array = np.array(img)
     image = cv2.cvtColor(np.array(im_array),cv2.COLOR_BGR2GRAY)
     result = segment(image)
-    cv2.imwrite("result.png",255*result)
-    return "worked"
+    res_n=cv2.normalize(result,dst=None,alpha=0,beta=255,norm_type=cv2.NORM_MINMAX,dtype=cv2.CV_8U)
+    out_image = Image.fromarray(res_n)
+    buff = io.BytesIO()
+    out_image.save(buff, format="PNG")
+    image_string = base64.b64encode(buff.getvalue()).decode("utf-8")
+    return image_string
 
 if __name__ == "__main__":
 

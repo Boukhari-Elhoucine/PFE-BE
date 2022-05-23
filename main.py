@@ -24,10 +24,8 @@ def process():
     img = Image.open(file)
     im_array = np.array(img)
     image = cv2.cvtColor(np.array(im_array),cv2.COLOR_BGR2GRAY)
-    mask = np.zeros(image.shape)
-    halfx = int(mask.shape[0] / 2)
-    halfy = int(mask.shape[1] / 2)
-    mask[halfx: halfx + 50, halfy: halfy + 50] = 255
+    mask =  cv2.GaussianBlur(image,(5,5),cv2.BORDER_DEFAULT)
+    mask = cv2.equalizeHist(mask)
     #chanvese(image,mask,max_its=1000,alpha=0.2,display=True)
     p = Process(target=chanvese,args=(image,mask,iters,alpha,0,'r',True))
     p.start()

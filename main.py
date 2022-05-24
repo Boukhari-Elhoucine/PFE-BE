@@ -37,7 +37,7 @@ def process():
     #out_image.save(buff, format="PNG")
     #image_string = base64.b64encode(buff.getvalue()).decode("utf-8")
     #return image_string
-    return "test"
+    return send_file("./levelset_end.png")
 
 if __name__ == "__main__":
 
